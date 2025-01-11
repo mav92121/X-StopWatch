@@ -4,6 +4,7 @@ import "./App.css";
 function App() {
   const [minute, setMinute] = useState(0);
   const [second, setSecond] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
   let interval = useRef(null);
 
   const formatedSecond = () => {
@@ -15,10 +16,12 @@ function App() {
     setSecond(0);
     clearInterval(interval.current);
     interval.current = null;
+    setIsRunning(false);
   };
 
   const startTimer = () => {
-    if (interval.current) return; // Prevent multiple intervals
+    if (interval.current) return;
+    setIsRunning(true);
     interval.current = setInterval(() => {
       setSecond((prevSecond) => {
         if (prevSecond === 59) {
@@ -30,13 +33,23 @@ function App() {
     }, 1000);
   };
 
+  const stopTimer = () => {
+    clearInterval(interval.current);
+    interval.current = null;
+    setIsRunning(false);
+  };
+
   return (
     <div className="p-10">
       <h1>Stopwatch</h1>
       <p className="py-10">
-        Time : {minute}:{formatedSecond()}
+        Time: {minute}:{formatedSecond()}
       </p>
-      <button onClick={startTimer}>Start</button>
+      {!isRunning ? (
+        <button onClick={startTimer}>Start</button>
+      ) : (
+        <button onClick={stopTimer}>Stop</button>
+      )}
       <button onClick={resetTimer}>Reset</button>
     </div>
   );
